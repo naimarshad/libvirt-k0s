@@ -78,7 +78,7 @@ helm upgrade --install traefik traefik/traefik \
 ### First Make sure change the email to your registered email to use with acme
 
 ```
-sed -i 's/acme_registration_email/<YOUR_EMAIL>/' cert-manager/values.yaml
+sed -i 's/acme_registration_email/<YOUR_EMAIL>/' cert-manager/cluster-issuer.yaml
 
 ```
 
@@ -100,6 +100,11 @@ helm upgrade --install cert-manager jetstack/cert-manager \
   --values cert-manager/cloudflare-api-token-values.local.yaml
 ```
 
+### Apply cluster-issuer manifest
+
+```
+kubectl apply -f cert-manager/cluster-issuer.yaml
+```
 
 ## Validate
 
