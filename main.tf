@@ -73,7 +73,7 @@ resource "null_resource" "k0sctl_apply" {
   }
 
   provisioner "local-exec" {
-    command     = "k0sctl apply --config ${abspath(path.module)}/../../k0s/k0sctl-libvirt.yaml"
+    command     = "k0sctl apply --config ${abspath(path.module)}/k0sctl-libvirt.yaml"
     working_dir = abspath(path.module)
   }
 }
