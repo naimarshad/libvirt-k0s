@@ -11,7 +11,7 @@ This play builds 1 control plane + 3 worker VMs on libvirt/KVM, then provisions 
 
   - /var/lib/libvirt/images/noble-server-cloudimg-amd64.img
 
-## 1) Provision VMs with Terraform/OpenTofu
+## Provision VMs with Terraform/OpenTofu
 
 1. Copy the example variables file and edit values:
 
@@ -35,7 +35,7 @@ terraform apply
 
 This module pins `dmacvicar/libvirt` to `< 0.9.0` to keep the classic schema
 
-## 2) Prepare k0sctl config
+## Prepare k0sctl config
 
 The libvirt-ready config is at `k0sctl-libvirt.yaml`.
 
@@ -47,15 +47,20 @@ Make sure these match your VM IPs and SSH key:
 
 Calico manifests are already wired into the controller node via `files` and `hooks`.
 
-## 3) Bootstrap k0s + Calico
+## Generate the kubeconfig and use it
 
-```bash
-k0sctl apply --config k0sctl-libvirt.yaml
+```
+k0sctl kubeconfig --config k0sctl-libvirt.yaml > kubeconfig
+export ./kubeconfig
 ```
 
-K0s is configured with `network.provider: custom`, so it does not install a built-in CNI. Calico is installed by the apply hook.
+## Verify the cluster state
 
-## 4) Install Traefik (no built-in ingress)
+```
+kubectl get nodes -owide
+```
+
+## Install Traefik (no built-in ingress)
 
 ```bash
 helm repo add traefik https://traefik.github.io/charts
@@ -66,9 +71,9 @@ helm upgrade --install traefik traefik/traefik \
   --values traefik/values.yaml
 ```
 
- Traefik runs as a DaemonSet on host network ports 80/443 (see `k0s/traefik/values.yaml`).
+ Traefik runs as a DaemonSet on host network ports 80/443 (see `traefik/values.yaml`).
 
-## 5) Install cert-manager + Cloudflare DNS01
+## Install cert-manager + Cloudflare DNS01
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
@@ -89,13 +94,7 @@ helm upgrade --install cert-manager jetstack/cert-manager \
   --values cert-manager/cloudflare-api-token-values.local.yaml
 ```
 
-Apply the ClusterIssuer:
-
-```bash
-kubectl apply -f k0s/cert-manager/cluster-issuer.yaml
-```
-
-## 6) Validate
+## Validate
 
 ```bash
 kubectl get nodes -o wide
