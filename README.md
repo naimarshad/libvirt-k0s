@@ -51,7 +51,7 @@ Calico manifests are already wired into the controller node via `files` and `hoo
 
 ```
 k0sctl kubeconfig --config k0sctl-libvirt.yaml > kubeconfig
-export ./kubeconfig
+export KUBECONFIG=./kubeconfig
 ```
 
 ## Verify the cluster state
