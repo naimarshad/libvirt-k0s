@@ -1,0 +1,14 @@
+version: 2
+ethernets:
+  eth0:
+    match:
+      macaddress: ${mac_address}
+    set-name: eth0
+    addresses:
+      - ${ip_address}/${cidr_prefix}
+    gateway4: ${gateway}
+    nameservers:
+      addresses:
+%{ for dns in dns_servers ~}
+        - ${dns}
+%{ endfor ~}

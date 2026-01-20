@@ -1,0 +1,100 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-libvirt-lab
+spec:
+  options:
+    wait:
+      enabled: false
+  hosts:
+    - role: controller
+      ssh:
+        address: 192.168.150.10
+        user: ubuntu
+        keyPath: ~/.ssh/id_ed25519
+      files:
+        - name: calico-operator
+          src: ./calico/tigera-operator.yaml
+          dst: /var/lib/k0s/manifests/calico/00-tigera-operator.yaml
+          perm: "0644"
+        - name: calico-custom-resources
+          src: ./calico/custom-resources.yaml
+          dst: /var/lib/k0s/manifests/calico/10-custom-resources.yaml
+          perm: "0644"
+      hooks:
+        apply:
+          after:
+            - |
+              sudo -- /bin/sh -c '
+                set -e
+                mkdir -p /var/lib/k0s/manifests/calico
+
+                /usr/local/bin/k0s kubectl apply --server-side --force-conflicts -f /var/lib/k0s/manifests/calico/00-tigera-operator.yaml
+                /usr/local/bin/k0s kubectl wait --for=condition=Established --timeout=300s crd/installations.operator.tigera.io
+                /usr/local/bin/k0s kubectl wait --for=condition=Established --timeout=300s crd/apiservers.operator.tigera.io
+                /usr/local/bin/k0s kubectl -n tigera-operator wait --for=condition=Available --timeout=300s deploy/tigera-operator || true
+                /usr/local/bin/k0s kubectl apply -f /var/lib/k0s/manifests/calico/10-custom-resources.yaml
+              '
+
+    - role: worker
+      ssh:
+        address: 192.168.150.11
+        user: ubuntu
+        keyPath: ~/.ssh/id_ed25519
+      hooks:
+        apply:
+          after:
+            - |
+              sudo -- /bin/sh -c '
+                set -e
+                mkdir -p /var/lib/kubelet/plugins_registry
+                chown root:root /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                chmod 755 /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                systemctl restart k0sworker
+              '
+    - role: worker
+      ssh:
+        address: 192.168.150.12
+        user: ubuntu
+        keyPath: ~/.ssh/id_ed25519
+      hooks:
+        apply:
+          after:
+            - |
+              sudo -- /bin/sh -c '
+                set -e
+                mkdir -p /var/lib/kubelet/plugins_registry
+                chown root:root /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                chmod 755 /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                systemctl restart k0sworker
+              '
+    - role: worker
+      ssh:
+        address: 192.168.150.13
+        user: ubuntu
+        keyPath: ~/.ssh/id_ed25519
+      hooks:
+        apply:
+          after:
+            - |
+              sudo -- /bin/sh -c '
+                set -e
+                mkdir -p /var/lib/kubelet/plugins_registry
+                chown root:root /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                chmod 755 /var/lib/kubelet /var/lib/kubelet/plugins_registry
+                systemctl restart k0sworker
+              '
+
+  k0s:
+    version: v1.34.2+k0s.0
+    config:
+      spec:
+        api:
+          address: 192.168.150.10
+          sans:
+            - 192.168.150.10
+            - k0s-cp1
+        network:
+          provider: custom
+          podCIDR: 10.244.0.0/16
+          serviceCIDR: 10.96.0.0/12

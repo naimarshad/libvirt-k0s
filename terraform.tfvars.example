@@ -1,0 +1,42 @@
+base_image = "/var/lib/libvirt/images/noble-server-cloudimg-amd64.img"
+
+ssh_authorized_keys = [
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCy...",
+]
+
+dns_servers = ["1.1.1.1", "8.8.8.8"]
+
+nodes = {
+  cp1 = {
+    name   = "k0s-cp1"
+    role   = "controller"
+    ip     = "192.168.150.10"
+    mac    = "52:54:00:aa:00:10"
+    vcpu   = 2
+    memory = 4096
+  }
+  w1 = {
+    name   = "k0s-w1"
+    role   = "worker"
+    ip     = "192.168.150.11"
+    mac    = "52:54:00:aa:00:11"
+    vcpu   = 4
+    memory = 8192
+  }
+  w2 = {
+    name   = "k0s-w2"
+    role   = "worker"
+    ip     = "192.168.150.12"
+    mac    = "52:54:00:aa:00:12"
+    vcpu   = 4
+    memory = 8192
+  }
+  w3 = {
+    name   = "k0s-w3"
+    role   = "worker"
+    ip     = "192.168.150.13"
+    mac    = "52:54:00:aa:00:13"
+    vcpu   = 4
+    memory = 8192
+  }
+}
