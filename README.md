@@ -75,24 +75,31 @@ helm upgrade --install traefik traefik/traefik \
 
 ## Install cert-manager + Cloudflare DNS01
 
+### First Make sure change the email to your registered email to use with acme
+
+```
+sed -i 's/acme_registration_email/<YOUR_EMAIL>/' cert-manager/values.yaml
+
+```
+
+### Add your cloudflare api token which have appropriate permissions.
+
+```
+sed -i 's/CHANGEME/<YOUR_TOKEN>/' cert-manager/cloudflare-api-token-values.example.yaml
+cp cert-manager/cloudflare-api-token-values.example.yaml cert-manager/cloudflare-api-token-values.local.yaml
+```
+
+### Finally Install Cert Manager
+
 ```bash
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm upgrade --install cert-manager jetstack/cert-manager \
   --namespace cert-manager --create-namespace \
-  --values cert-manager/values.yaml
-```
-
-Create the Cloudflare API token values file and apply it via Helm:
-
-```bash
-sed -i 's/CHANGEME/<YOUR_TOKEN>/' cert-manager/cloudflare-api-token-values.example.yaml
-cp cert-manager/cloudflare-api-token-values.example.yaml cert-manager/cloudflare-api-token-values.local.yaml
-helm upgrade --install cert-manager jetstack/cert-manager \
-  --namespace cert-manager --create-namespace \
   --values cert-manager/values.yaml \
   --values cert-manager/cloudflare-api-token-values.local.yaml
 ```
+
 
 ## Validate
 
