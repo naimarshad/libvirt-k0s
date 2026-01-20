@@ -9,7 +9,7 @@ extraObjects:
       name: letsencrypt-cloudflare
     spec:
       acme:
-        email: naimarshad@gmail.com
+        email: acme_registration_email
         server: https://acme-v02.api.letsencrypt.org/directory
         privateKeySecretRef:
           name: letsencrypt-cloudflare-account-key
