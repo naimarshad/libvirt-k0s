@@ -16,6 +16,7 @@ This play builds 1 control plane + 3 worker VMs on libvirt/KVM, then provisions 
 1. Copy the example variables file and edit values:
 
 ```bash
+cd libvirt-k0s
 cp terraform.tfvars.example terraform.tfvars
 ```
 
@@ -28,7 +29,6 @@ cp terraform.tfvars.example terraform.tfvars
 3. Apply:
 
 ```bash
-cd libvirt-k0s
 terraform init
 terraform apply
 ```
