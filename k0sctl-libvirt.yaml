@@ -11,7 +11,7 @@ spec:
       ssh:
         address: 192.168.150.10
         user: ubuntu
-        keyPath: ~/.ssh/id_ed25519
+        keyPath: ~/.ssh/id_rsa
       files:
         - name: calico-operator
           src: ./calico/tigera-operator.yaml
@@ -40,7 +40,7 @@ spec:
       ssh:
         address: 192.168.150.11
         user: ubuntu
-        keyPath: ~/.ssh/id_ed25519
+        keyPath: ~/.ssh/id_rsa
       hooks:
         apply:
           after:
@@ -72,7 +72,7 @@ spec:
       ssh:
         address: 192.168.150.13
         user: ubuntu
-        keyPath: ~/.ssh/id_ed25519
+        keyPath: ~/.ssh/id_rsa
       hooks:
         apply:
           after:
