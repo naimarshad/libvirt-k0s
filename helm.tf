@@ -5,9 +5,7 @@ resource "helm_release" "traefik" {
   chart            = "traefik"
   namespace        = "traefik"
   create_namespace = true
-  disable_crd_hooks = false
 
-  # Use the values file you provided
   values = [
     file("${path.module}/traefik-values/values.yaml")
   ]
@@ -22,9 +20,7 @@ resource "helm_release" "cert_manager" {
   chart            = "cert-manager"
   namespace        = "cert-manager"
   create_namespace = true
-  disable_crd_hooks = false
 
-  # Use the values file you provided
   values = [
     file("${path.module}/cert-manager-config/values.yaml")
   ]

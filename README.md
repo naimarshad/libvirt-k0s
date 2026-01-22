@@ -31,12 +31,6 @@ The deployment is fully automated in a single apply. OpenTofu creates the VMs, r
    tofu apply
    ```
 
-It might faile and I am still working on a fix it fails while trying to apply the helm charts. If happens so run the tofu apply again..
-
-```
-tofu apply
-```
-
 ### How it works (one-phase apply)
 
 1. Infrastructure: creates VMs and networking.
