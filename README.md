@@ -63,5 +63,4 @@ kubectl get pods -A
 
 - **Persistence**: The `kubeconfig.placeholder` ensures `tofu plan` works on fresh clones.
 - **Provider Switching**: The Kubernetes/Helm providers read the generated kubeconfig once it exists.
-- **Dependencies**: The ClusterIssuer is applied via a `null_resource` using `kubectl` to ensure it waits for the cert-manager CRDs to be fully ready.
 - **Network**: Static IPs are configured via cloud-init. Default CIDR is `192.168.150.0/24`.
