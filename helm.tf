@@ -1,0 +1,82 @@
+# Install Traefik
+resource "helm_release" "traefik" {
+  for_each = var.enable_k8s_resources ? { enabled = true } : {}
+
+  name             = "traefik"
+  repository       = "https://traefik.github.io/charts"
+  chart            = "traefik"
+  namespace        = "traefik"
+  create_namespace = true
+
+  # Use the values file you provided
+  values = [
+    file("${path.module}/traefik-values/values.yaml")
+  ]
+
+  depends_on = [null_resource.k0sctl_apply]
+}
+
+# Install Cert-Manager
+resource "helm_release" "cert_manager" {
+  for_each = var.enable_k8s_resources ? { enabled = true } : {}
+
+  name             = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  # Use the values file you provided
+  values = [
+    file("${path.module}/cert-manager-config/values.yaml")
+  ]
+
+  depends_on = [null_resource.k0sctl_apply]
+}
+
+# Create the Cloudflare API Token Secret
+resource "kubernetes_secret_v1" "cloudflare_api_token" {
+  for_each = var.enable_k8s_resources ? { enabled = true } : {}
+
+  metadata {
+    name      = "cloudflare-api-token"
+    namespace = "cert-manager"
+  }
+
+  type = "Opaque"
+
+  data = {
+    api-token = var.cloudflare_api_token
+  }
+
+  depends_on = [helm_release.cert_manager]
+}
+
+# Create the ClusterIssuer using kubectl to avoid CRD plan-time validation issues
+resource "null_resource" "cluster_issuer" {
+  for_each = var.enable_k8s_resources ? { enabled = true } : {}
+
+  triggers = {
+    manifest_hash = sha256(templatefile("${path.module}/cert-manager-config/cluster-issuer.yaml", {
+      acme_email = var.acme_email
+    }))
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      export KUBECONFIG=${abspath(path.module)}/kubeconfig
+      # Wait for CRD to be established
+      count=0
+      until kubectl get crd clusterissuers.cert-manager.io || [ $count -eq 20 ]; do
+        sleep 5
+        count=$((count + 1))
+      done
+      echo '${templatefile("${path.module}/cert-manager-config/cluster-issuer.yaml", { acme_email = var.acme_email })}' | kubectl apply -f -
+    EOT
+  }
+
+  depends_on = [
+    helm_release.cert_manager,
+    kubernetes_secret_v1.cloudflare_api_token
+  ]
+}

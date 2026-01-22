@@ -4,7 +4,7 @@
       name: letsencrypt-cloudflare
     spec:
       acme:
-        email: acme_registration_email
+        email: ${acme_email}
         server: https://acme-v02.api.letsencrypt.org/directory
         privateKeySecretRef:
           name: letsencrypt-cloudflare-account-key

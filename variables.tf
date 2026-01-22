@@ -67,3 +67,20 @@ variable "dns_servers" {
   description = "DNS servers for static IP configuration."
   default     = ["1.1.1.1", "8.8.8.8"]
 }
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API Token for DNS01 challenge."
+  sensitive   = true
+}
+
+variable "acme_email" {
+  type        = string
+  description = "Email address for Let's Encrypt registration."
+}
+
+variable "enable_k8s_resources" {
+  type        = bool
+  description = "Whether to create Kubernetes and Helm resources."
+  default     = false
+}
