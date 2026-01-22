@@ -1,12 +1,11 @@
 # Install Traefik
 resource "helm_release" "traefik" {
-  for_each = var.enable_k8s_resources ? { enabled = true } : {}
-
   name             = "traefik"
   repository       = "https://traefik.github.io/charts"
   chart            = "traefik"
   namespace        = "traefik"
   create_namespace = true
+  disable_crd_hooks = false
 
   # Use the values file you provided
   values = [
@@ -18,13 +17,12 @@ resource "helm_release" "traefik" {
 
 # Install Cert-Manager
 resource "helm_release" "cert_manager" {
-  for_each = var.enable_k8s_resources ? { enabled = true } : {}
-
   name             = "cert-manager"
   repository       = "https://charts.jetstack.io"
   chart            = "cert-manager"
   namespace        = "cert-manager"
   create_namespace = true
+  disable_crd_hooks = false
 
   # Use the values file you provided
   values = [
@@ -36,8 +34,6 @@ resource "helm_release" "cert_manager" {
 
 # Create the Cloudflare API Token Secret
 resource "kubernetes_secret_v1" "cloudflare_api_token" {
-  for_each = var.enable_k8s_resources ? { enabled = true } : {}
-
   metadata {
     name      = "cloudflare-api-token"
     namespace = "cert-manager"
@@ -54,8 +50,6 @@ resource "kubernetes_secret_v1" "cloudflare_api_token" {
 
 # Create the ClusterIssuer using kubectl to avoid CRD plan-time validation issues
 resource "null_resource" "cluster_issuer" {
-  for_each = var.enable_k8s_resources ? { enabled = true } : {}
-
   triggers = {
     manifest_hash = sha256(templatefile("${path.module}/cert-manager-config/cluster-issuer.yaml", {
       acme_email = var.acme_email

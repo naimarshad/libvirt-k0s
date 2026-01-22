@@ -4,6 +4,13 @@ ssh_authorized_keys = [
   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCy...",
 ]
 
+# cert-manager / Cloudflare configuration
+cloudflare_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
+acme_email           = "your-email@example.com"
+
+enable_k8s_resources = true
+
+
 dns_servers = ["1.1.1.1", "8.8.8.8"]
 
 nodes = {

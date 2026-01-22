@@ -82,5 +82,5 @@ variable "acme_email" {
 variable "enable_k8s_resources" {
   type        = bool
   description = "Whether to create Kubernetes and Helm resources."
-  default     = false
+  default     = true
 }
