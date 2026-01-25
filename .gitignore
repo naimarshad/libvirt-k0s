@@ -36,5 +36,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-cert-manager/cloudflare-api-token-values.local.yaml
+cert-manager-config/cloudflare-api-token-values.local.yaml
 kubeconfig
