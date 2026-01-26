@@ -24,8 +24,7 @@ provider "registry.opentofu.org/dmacvicar/libvirt" {
 }
 
 provider "registry.opentofu.org/hashicorp/helm" {
-  version     = "3.1.1"
-  constraints = ">= 2.9.0"
+  version = "3.1.1"
   hashes = [
     "h1:8SOQHxpTUK0rYBsCoxqrvDRc75KZl9hBt1m7QLrs+QM=",
     "zh:09b38905e234c2e0b185332819614224660050b7e4b25e9e858b593ab01adafe",

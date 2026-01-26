@@ -1,0 +1,53 @@
+
+image:
+  repository: rustfs/rustfs
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+
+mode:
+  standalone:
+    enabled: true
+  distributed:
+    enabled: false
+
+secret:
+  rustfs:
+    access_key: rustfsadmin
+    secret_key: rustfsadmin
+
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+  enabled: true
+  className: "traefik" # Specify the classname, traefik or nginx. Different classname has different annotations for session sticky.
+  traefikAnnotations:
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+    # traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.name: rustfs
+    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: none
+    # traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+
+  hosts:
+    - host: k0s3.linuxtechinfo.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    enabled: true
+    certManager:
+      enabled: true
+    secretName: secret-tls-rustfs
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    memory: 128Mi
+
+storageclass:
+  name: openebs-hostpath
+  dataStorageSize: 5120Mi
+  logStorageSize: 256Mi

@@ -1,18 +1,3 @@
-# Install Traefik
-resource "helm_release" "traefik" {
-  name             = "traefik"
-  repository       = "https://traefik.github.io/charts"
-  chart            = "traefik"
-  namespace        = "traefik"
-  create_namespace = true
-
-  values = [
-    file("${path.module}/traefik-values/values.yaml")
-  ]
-
-  depends_on = [null_resource.k0sctl_apply]
-}
-
 # Install Cert-Manager
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
@@ -44,6 +29,7 @@ resource "kubernetes_secret_v1" "cloudflare_api_token" {
   depends_on = [helm_release.cert_manager]
 }
 
+
 # Create the ClusterIssuer using kubectl to avoid CRD plan-time validation issues
 resource "null_resource" "cluster_issuer" {
   triggers = {
@@ -68,5 +54,23 @@ resource "null_resource" "cluster_issuer" {
   depends_on = [
     helm_release.cert_manager,
     kubernetes_secret_v1.cloudflare_api_token
+  ]
+}
+
+resource "helm_release" "lti-rustfs" {
+  name             = "rustfs"
+  repository       = "https://charts.rustfs.com"
+  chart            = "rustfs"
+  namespace        = "rustfs"
+  create_namespace = true
+
+  values = [
+    file("${path.module}/lti-rustfs/values.yaml")
+  ]
+
+  depends_on = [
+    helm_release.cert_manager,
+    kubernetes_secret_v1.cloudflare_api_token,
+    null_resource.cluster_issuer
   ]
 }
