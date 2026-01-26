@@ -4,6 +4,7 @@ ethernets:
     match:
       macaddress: ${mac_address}
     set-name: eth0
+    link-local: [ipv4]
     addresses:
       - ${ip_address}/${cidr_prefix}
     gateway4: ${gateway}

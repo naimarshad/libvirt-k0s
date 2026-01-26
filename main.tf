@@ -4,6 +4,9 @@ resource "libvirt_network" "k0s" {
   domain    = "k0s.local"
   addresses = [var.network_cidr]
 
+  dns {
+    enabled = true
+  }
   dhcp {
     enabled = false
   }

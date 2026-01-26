@@ -18,13 +18,13 @@ variable "pool_name" {
 variable "network_name" {
   type        = string
   description = "Libvirt network name."
-  default     = "k0s-net"
+  default     = "k0sNet"
 }
 
 variable "network_cidr" {
   type        = string
   description = "CIDR for the libvirt NAT network."
-  default     = "192.168.150.0/24"
+  default     = "192.168.160.0/24"
 }
 
 variable "nodes" {
@@ -65,7 +65,6 @@ variable "timezone" {
 variable "dns_servers" {
   type        = list(string)
   description = "DNS servers for static IP configuration."
-  default     = ["1.1.1.1", "8.8.8.8"]
 }
 
 variable "cloudflare_api_token" {
@@ -79,8 +78,8 @@ variable "acme_email" {
   description = "Email address for Let's Encrypt registration."
 }
 
-variable "enable_k8s_resources" {
-  type        = bool
-  description = "Whether to create Kubernetes and Helm resources."
-  default     = true
-}
+# variable "enable_k8s_resources" {
+#   type        = bool
+#   description = "Whether to create Kubernetes and Helm resources."
+#   default     = true
+# }
